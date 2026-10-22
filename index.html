@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Portal de Atendimentos para registrar solicitações dos cidadãos e acompanhar protocolos.">
+  <title>Portal de Atendimentos | Vereador Maré</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#" aria-label="Portal de Atendimentos - início">
+      <span class="brand-mark">
+        <img src="./Emblema Ezequias Maré Vereador.png" alt="Logo do vereador"
+          onerror="this.style.display='none'; this.parentElement.classList.add('logo-fallback')">
+        <span class="brand-fallback">PI</span>
+      </span>
+      <span>
+        <strong>Portal de Atendimentos</strong>
+        <small>Vereador Ezequias Rederd – Maré</small>
+      </span>
+    </a>
+
+    <nav class="topnav" aria-label="Navegação principal">
+      <button class="nav-link active" data-view="inicio">Início</button>
+      <button class="nav-link" data-view="nova">Nova solicitação</button>
+      <button class="nav-link" data-view="protocolos">Meus protocolos</button>
+    </nav>
+
+    <div class="account-actions">
+      <span id="welcomeLabel" class="welcome-label">Área do cidadão</span>
+      <button id="profileButton" class="button button-outline button-small">
+        Meu perfil
+      </button>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- INÍCIO -->
+    <section id="view-inicio" class="view">
+      <div class="hero">
+        <div class="hero-copy">
+          <span class="eyebrow">PARTICIPAÇÃO CIDADÃ</span>
+          <h1>Ajude a melhorar a nossa cidade</h1>
+          <p>
+            Registre problemas e sugestões do seu bairro e acompanhe
+            o andamento de cada protocolo em um só lugar.
+          </p>
+          <button class="button button-light" data-view="nova">
+            Registrar solicitação <span aria-hidden="true">→</span>
+          </button>
+        </div>
+
+        <div class="hero-art" aria-hidden="true">
+          <div class="art-circle"></div>
+          <div class="art-card art-card-one">
+            ✓<span>Solicitação registrada</span>
+          </div>
+          <div class="art-card art-card-two">
+            ⌖<span>Seu bairro importa</span>
+          </div>
+          <div class="art-building">
+            <i></i><i></i><i></i><i></i><b></b>
+          </div>
+        </div>
+      </div>
+
+      <section class="stats-grid" aria-label="Resumo dos protocolos">
+        <article class="stat-card">
+          <span class="stat-icon">▤</span>
+          <div>
+            <p>Minhas solicitações</p>
+            <strong id="statTotal">0</strong>
+          </div>
+        </article>
+
+        <article class="stat-card">
+          <span class="stat-icon pending-icon">◷</span>
+          <div>
+            <p>Em espera</p>
+            <strong id="statPending">0</strong>
+          </div>
+        </article>
+
+        <article class="stat-card">
+          <span class="stat-icon accepted-icon">✓</span>
+          <div>
+            <p>Aceitas</p>
+            <strong id="statAccepted">0</strong>
+          </div>
+        </article>
+      </section>
+
+      <section class="section-block">
+        <div class="section-heading">
+          <div>
+            <span class="eyebrow">ACESSO RÁPIDO</span>
+            <h2>O que você deseja fazer?</h2>
+          </div>
+        </div>
+
+        <div class="quick-grid">
+          <button class="quick-card" data-view="nova">
+            <span class="quick-icon">＋</span>
+            <strong>Nova solicitação</strong>
+            <small>Conte o que precisa de atenção na sua região.</small>
+            <span class="card-arrow">→</span>
+          </button>
+
+          <button class="quick-card" data-view="protocolos">
+            <span class="quick-icon">▤</span>
+            <strong>Meus protocolos</strong>
+            <small>Consulte suas solicitações e atualizações.</small>
+            <span class="card-arrow">→</span>
+          </button>
+
+          <button class="quick-card" id="profileQuick">
+            <span class="quick-icon">♙</span>
+            <strong>Meu perfil</strong>
+            <small>Veja ou atualize seus dados de contato.</small>
+            <span class="card-arrow">→</span>
+          </button>
+        </div>
+      </section>
+
+      <section class="section-block recent-block">
+        <div class="section-heading">
+          <div>
+            <span class="eyebrow">ACOMPANHAMENTO</span>
+            <h2>Solicitações recentes</h2>
+          </div>
+          <button class="text-button" data-view="protocolos">Ver todas →</button>
+        </div>
+        <div id="recentList" class="protocol-list"></div>
+      </section>
+
+      <p class="demo-note">
+        <strong>Versão demonstrativa:</strong>
+        os dados ficam salvos somente neste navegador. Para publicar
+        o portal e receber solicitações reais, será necessário conectar
+        um servidor e banco de dados seguros.
+      </p>
+    </section>
+
+    <!-- NOVA SOLICITAÇÃO -->
+    <section id="view-nova" class="view hidden">
+      <div class="page-heading">
+        <span class="eyebrow">PROCESSOS / NOVO PROTOCOLO</span>
+        <h1>Registrar nova solicitação</h1>
+        <p>Preencha as informações abaixo para que sua solicitação possa ser analisada.</p>
+      </div>
+
+      <form id="indicationForm" class="form-card">
+        <div class="action-intro">
+          <span class="eyebrow">ESCOLHA O TIPO DE SOLICITAÇÃO</span>
+          <h2>Como podemos ajudar?</h2>
+          <p>Veja a diferença entre as opções e escolha a que melhor corresponde ao seu objetivo.</p>
+
+          <div class="action-grid">
+            <button type="button" class="action-card" data-action-type="Indicação">
+              <span class="action-symbol">↗</span>
+              <strong>Indicação</strong>
+              <span>Pedido de melhoria ou serviço para a cidade.</span>
+              <small><b>Exemplo:</b> solicitar o conserto de uma rua do seu bairro.</small>
+            </button>
+
+            <button type="button" class="action-card" data-action-type="Requerimento">
+              <span class="action-symbol">▤</span>
+              <strong>Requerimento</strong>
+              <span>Pedido formal de informações, esclarecimentos ou providências de interesse público, conforme as competências da Câmara.</span>
+              <small><b>Exemplo:</b> pedir informações sobre a previsão de uma obra ou os gastos de um serviço.</small>
+            </button>
+
+            <button type="button" class="action-card" data-action-type="Projeto de Lei">
+              <span class="action-symbol">§</span>
+              <strong>Projeto de Lei</strong>
+              <span>Proposta para criar, alterar ou revogar uma lei municipal, sujeita à tramitação e votação previstas.</span>
+              <small><b>Exemplo:</b> propor uma lei para incentivar a coleta seletiva.</small>
+            </button>
+          </div>
+
+          <input type="hidden" id="actionType" name="actionType" value="">
+        </div>
+
+        <div id="actionDetails" class="hidden">
+          <div class="form-section-title">
+            <span class="step-number">1</span>
+            <div>
+              <h2>Sobre a solicitação</h2>
+              <p>Descreva o que precisa de atenção na sua região.</p>
+            </div>
+          </div>
+
+          <div id="citizenSummary" class="citizen-summary">
+            <p>
+              Para registrar uma solicitação, preencha primeiro seu cadastro
+              com nome, CEP, bairro, rua, número e telefone.
+            </p>
+            <button type="button" class="button button-outline" data-view="perfil">
+              Cadastrar meus dados
+            </button>
+          </div>
+
+          <div class="field">
+            <label for="assunto">
+              O que você deseja solicitar? <span class="required">*</span>
+            </label>
+            <select id="assunto" name="assunto" required>
+              <option value="">Selecione uma opção</option>
+              <option>Tapa-buracos e pavimentação</option>
+              <option>Iluminação pública</option>
+              <option>Limpeza</option>
+              <option>Manutenção de espaços públicos</option>
+              <option>Sinalização de trânsito</option>
+              <option value="Outro">Outro</option>
+            </select>
+
+            <div id="otherSubjectWrap" class="field hidden">
+              <label for="outroAssunto">Descreva sua solicitação</label>
+              <input id="outroAssunto" maxlength="150"
+                placeholder="Escreva o assunto da sua solicitação">
+            </div>
+          </div>
+
+          <div class="form-section-title separated">
+            <span class="step-number">2</span>
+            <div>
+              <h2>Local da solicitação</h2>
+              <p>Informe o endereço onde a situação acontece.</p>
+            </div>
+          </div>
+
+          <div class="field-grid address-grid">
+            <div class="field field-street">
+              <label for="localRua">Rua / avenida <span class="required">*</span></label>
+              <input id="localRua" name="localRua" maxlength="120"
+                placeholder="Nome da rua ou avenida" required>
+            </div>
+
+            <div class="field">
+              <label for="localNumero">Número / referência</label>
+              <input id="localNumero" name="localNumero" maxlength="40"
+                placeholder="Nº ou ponto de referência">
+            </div>
+
+            <div class="field">
+              <label for="localBairro">Bairro <span class="required">*</span></label>
+              <input id="localBairro" name="localBairro" maxlength="100"
+                placeholder="Nome do bairro" required>
+            </div>
+          </div>
+
+          <div class="form-section-title separated">
+            <span class="step-number">3</span>
+            <div>
+              <h2>Justificativa</h2>
+              <p>
+                Explique por que a situação precisa ser melhorada
+                e qual benefício a solução traria.
+              </p>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="justificativa">
+              Descreva a situação <span class="required">*</span>
+            </label>
+            <textarea id="justificativa" name="justificativa" rows="5"
+              maxlength="1500"
+              placeholder="Explique o problema, quem é afetado e por que essa melhoria é importante..."
+              required></textarea>
+            <div class="field-foot">
+              <small>Escreva livremente, com o nível de detalhe que desejar.</small>
+              <small id="charCount">0 caracteres</small>
+            </div>
+          </div>
+
+          <div class="form-section-title separated">
+            <span class="step-number">4</span>
+            <div>
+              <h2>Foto obrigatória</h2>
+              <p>Envie uma imagem que ajude a identificar o local e a situação.</p>
+            </div>
+          </div>
+
+          <div class="upload-box" id="uploadBox">
+            <input id="foto" name="foto" type="file" accept="image/*" required>
+
+            <label for="foto" class="upload-label">
+              <span class="upload-icon">↑</span>
+              <strong>Selecione uma foto</strong>
+              <span>JPG, PNG ou WEBP · máximo de 5 MB</span>
+              <span class="button button-outline">Escolher imagem</span>
+            </label>
+
+            <div id="imagePreviewWrap" class="image-preview-wrap hidden">
+              <img id="imagePreview" alt="Prévia da foto selecionada">
+              <div>
+                <strong id="fileName"></strong>
+                <small id="fileSize"></small>
+                <button id="removeImage" class="text-button" type="button">
+                  Remover foto
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="privacy-note">
+            <span>ⓘ</span>
+            <p>Evite incluir rostos, documentos ou informações pessoais de terceiros na imagem.</p>
+          </div>
+
+          <div class="form-actions">
+            <button type="button" class="button button-outline" data-view="inicio">
+              Cancelar
+            </button>
+            <button type="submit" class="button button-primary">
+              Enviar solicitação <span aria-hidden="true">→</span>
+            </button>
+          </div>
+        </div>
+      </form>
+    </section>
+
+    <!-- MEUS PROTOCOLOS -->
+    <section id="view-protocolos" class="view hidden">
+      <div class="page-heading">
+        <span class="eyebrow">PROCESSOS / ACOMPANHAMENTO</span>
+        <h1>Meus protocolos</h1>
+        <p>Consulte a data, o local e o status das suas solicitações.</p>
+      </div>
+
+      <div class="filter-bar">
+        <div class="field search-field">
+          <label for="protocolSearch">Pesquisar</label>
+          <input id="protocolSearch" placeholder="Protocolo, assunto ou bairro...">
+        </div>
+
+        <div class="field status-field">
+          <label for="statusFilter">Status</label>
+          <select id="statusFilter">
+            <option value="">Todos os status</option>
+            <option value="Em espera">Em espera</option>
+            <option value="Aceito">Aceito</option>
+            <option value="Não aprovado">Não aprovado</option>
+          </select>
+        </div>
+      </div>
+
+      <div id="allProtocols" class="protocol-list"></div>
+
+      <p class="demo-note">
+        O status apresentado nesta demonstração é ilustrativo.
+        Em uma versão publicada, somente usuários autorizados
+        deverão atualizar a análise dos protocolos.
+      </p>
+    </section>
+
+    <!-- LOGIN -->
+    <section id="view-login" class="view hidden">
+      <div class="page-heading">
+        <span class="eyebrow">ÁREA DO CIDADÃO</span>
+        <h1>Entrar no portal</h1>
+        <p>Entre com o usuário (nome completo) e a senha que você cadastrou.</p>
+      </div>
+
+      <form id="loginForm" class="form-card login-card">
+        <div class="field">
+          <label for="loginUsuario">Usuário — nome completo</label>
+          <input id="loginUsuario" autocomplete="username" required>
+        </div>
+
+        <div class="field">
+          <label for="loginSenha">Senha</label>
+          <input id="loginSenha" type="password"
+            autocomplete="current-password" required>
+        </div>
+
+        <div class="form-actions">
+          <button class="button button-outline" type="button" id="goRegister">
+            Criar cadastro
+          </button>
+          <button class="button button-primary" type="submit">Entrar →</button>
+        </div>
+
+        <p class="small-note">
+          Demonstração local: para uso real, conecte um serviço seguro de autenticação.
+        </p>
+      </form>
+    </section>
+
+    <!-- CADASTRO -->
+    <section id="view-perfil" class="view hidden">
+      <div class="page-heading">
+        <span class="eyebrow">CONTA / MEU PERFIL</span>
+        <h1>Meu perfil</h1>
+        <p>Informe como podemos entrar em contato sobre suas solicitações.</p>
+      </div>
+
+      <form id="profileForm" class="form-card profile-form">
+        <div class="field">
+          <label for="nome">Nome completo <span class="required">*</span></label>
+          <input id="nome" name="nome" maxlength="120"
+            placeholder="Seu nome completo" autocomplete="name" required>
+        </div>
+
+        <div class="field-grid">
+          <div class="field">
+            <label for="nascimento">Data de nascimento <span class="required">*</span></label>
+            <input id="nascimento" name="nascimento" type="date" required>
+          </div>
+
+          <div class="field">
+            <label for="profissao">Profissão <span class="required">*</span></label>
+            <input id="profissao" name="profissao" maxlength="100"
+              placeholder="Sua profissão" required>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="usuario">Usuário (nome completo) <span class="required">*</span></label>
+          <input id="usuario" name="usuario" maxlength="120"
+            placeholder="Seu nome completo para entrar"
+            autocomplete="username" required>
+          <small class="field-hint">Use seu nome completo como usuário.</small>
+        </div>
+
+        <div class="field-grid">
+          <div class="field">
+            <label for="senha">Criar senha <span class="required">*</span></label>
+            <input id="senha" name="senha" type="password" minlength="8"
+              autocomplete="new-password"
+              placeholder="Mínimo 8 caracteres, com letras e números" required>
+          </div>
+
+          <div class="field">
+            <label for="confirmarSenha">Confirmar senha <span class="required">*</span></label>
+            <input id="confirmarSenha" name="confirmarSenha" type="password"
+              minlength="8" autocomplete="new-password"
+              placeholder="Digite a senha novamente" required>
+          </div>
+        </div>
+
+        <div class="field-grid address-grid">
+          <div class="field">
+            <label for="cep">CEP <span class="required">*</span></label>
+            <input id="cep" name="cep" maxlength="9" inputmode="numeric"
+              placeholder="00000-000" autocomplete="postal-code" required>
+          </div>
+
+          <div class="field">
+            <label for="bairro">Bairro <span class="required">*</span></label>
+            <input id="bairro" name="bairro" maxlength="100"
+              placeholder="Seu bairro" autocomplete="address-level3" required>
+          </div>
+
+          <div class="field">
+            <label for="rua">Rua / avenida <span class="required">*</span></label>
+            <input id="rua" name="rua" maxlength="120"
+              placeholder="Nome da rua" autocomplete="street-address" required>
+          </div>
+
+          <div class="field">
+            <label for="numero">Número <span class="required">*</span></label>
+            <input id="numero" name="numero" maxlength="20"
+              placeholder="Nº da residência" required>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="telefone">Telefone para contato <span class="required">*</span></label>
+          <input id="telefone" name="telefone" type="tel" maxlength="25"
+            placeholder="(00) 00000-0000" autocomplete="tel" required>
+        </div>
+
+        <div class="form-actions">
+          <button class="button button-primary" type="submit">
+            Criar cadastro e continuar →
+          </button>
+        </div>
+
+        <p class="small-note">
+          Este protótipo salva seus dados apenas neste navegador.
+          Não é um cadastro online seguro.
+        </p>
+      </form>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <span>Portal de Atendimentos</span>
+    <span>Participação cidadã · Protótipo demonstrativo</span>
+  </footer>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+</body>
+</html>
